@@ -67,6 +67,7 @@ type Bazelisk struct {
 }
 
 func NewBazelisk(workspaceRoot string, allowReenter bool) *Bazelisk {
+	println("[DEBUG]", "workspaceRoot", workspaceRoot)
 	return &Bazelisk{
 		workspaceRoot: workspaceRoot,
 		allowReenter:  allowReenter,
@@ -86,6 +87,7 @@ func (bazelisk *Bazelisk) GetBazelPath(repos *core.Repositories) (string, error)
 		bazeliskHome = filepath.Join(userCacheDir, "bazelisk")
 	}
 
+	println("[DEBUG]", "bazeliskHome", bazeliskHome)
 	err := os.MkdirAll(bazeliskHome, 0755)
 	if err != nil {
 		return "", fmt.Errorf("could not create directory %s: %v", bazeliskHome, err)
@@ -113,6 +115,7 @@ func (bazelisk *Bazelisk) GetBazelPath(repos *core.Repositories) (string, error)
 
 	// If we aren't using a local Bazel binary, we'll have to parse the version string and
 	// download the version that the user wants.
+	println("[DEBUG]", "bazelPath", bazelPath)
 	if !filepath.IsAbs(bazelPath) {
 		bazelFork, bazelVersion, err := parseBazelForkAndVersion(bazelVersionString)
 		if err != nil {
@@ -121,6 +124,7 @@ func (bazelisk *Bazelisk) GetBazelPath(repos *core.Repositories) (string, error)
 
 		var downloader core.DownloadFunc
 		resolvedBazelVersion, downloader, err = repos.ResolveVersion(bazeliskHome, bazelFork, bazelVersion)
+		println("[DEBUG]", "bazeliskHome", bazeliskHome, "bazelVersion", bazelVersion)
 		if err != nil {
 			return "", fmt.Errorf("could not resolve the version '%s' to an actual version number: %v", bazelVersion, err)
 		}
